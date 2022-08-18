@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const db = require("../config/mysql");
 
+// 유저 등록하기
 router.post("/", async (req, res, next) => {
   try {
     const sql = `
@@ -77,6 +78,24 @@ router.post("/:userId", async(req, res, next) => {
     }
 })
 
+// 특정 유저 삭제하기
+router.delete("/:userId", async(req, res, next) => {
+    try {
+        const sql = `select * from users where user_id = ${req.params.userId};`
+        const [rows, fields] = await db.query(sql)
+        // console.log('rows', rows)
+        if (rows.length) {
+            const sql2 = `delete FROM users where user_id=${req.params.userId};`
+            const rows = await db.query(sql2)
+            // console.log('삭제중 rows', rows[0])
+            return res.status(200).json({mesaage:"deleted"})
+        } else {
+            return res.status(404).json({message:"USER_NOT_FOUND"})
+        }        
+    } catch(e) {
+        console.log(e.message);
+    }
+})
 
 
 
