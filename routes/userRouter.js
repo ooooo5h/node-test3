@@ -59,10 +59,25 @@ router.get("/:userId", async (req, res, next) => {
         // console.log('데이터없음')
         return res.status(404).json({message:"USER_NOT_FOUND"})
     }
-    
   } catch (e) {
     console.log(e.message);
   }
 });
+
+// 특정 유저 정보 수정하기
+router.post("/:userId", async(req, res, next) => {
+    try {
+        const sql = `UPDATE users SET name = '${req.body.name}', age='${req.body.age}' WHERE user_id = '${req.params.userId}'`
+        const rows = await db.query(sql)
+        console.log(rows[0])
+        return res.status(200).json({ message: "updated"});
+
+    } catch(e) {
+        console.log(e.message);
+    }
+})
+
+
+
 
 module.exports = router;
