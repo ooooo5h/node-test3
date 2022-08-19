@@ -6,17 +6,23 @@ const signUp = async (username, password) => {
     );
 
     if (!pwValidation.test(password)) {
-        const err = new Error("PASSWORD_IS_NOT_VALID");
+        const err  = new Error("PASSWORD_IS_NOT_VALID");
         err.status = 400;
         throw err;
     }
 
-    const createUser = await userDao.createUser(
+    // const createUser = await userDao.createUser(
+    //     username,
+    //     password
+    // );
+
+    // console.log('createUSER는 모야', createUser)   // undefined가 찍힘. 왜 찍힐까? 내 생각에는 userDao.createUser가 아무것도 반환하고있지않음.
+    // return createUser;  //딱히 필요가 없는 것 같음? 함순데 return값이 없어도 되나? 실행은 되네?? 
+
+    await userDao.createUser(
         username,
         password
     );
-
-    return createUser;
 }
 
 const signIn = async (username, password) => {
