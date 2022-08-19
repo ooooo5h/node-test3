@@ -16,8 +16,6 @@ app.get('/', (req,res) => {
     res.send('hello node')
 })
 
-app.use('/users', require('./routes/userRouter'))
-
 const port = 4000;
 app.listen(port, () => {
     console.log('서버켜짐')
