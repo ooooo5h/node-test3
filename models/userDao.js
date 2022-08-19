@@ -1,9 +1,8 @@
 const db = require("../config/mysql");
 
-// 회원가입
 const createUser = async (username, password) => {
     try {
-        const sql = `insert into users (username, password) values ('${username}', '${password}');`;
+        const sql = `INSERT INTO users (username, password) VALUES ('${username}', '${password}');`;
         await db.query(sql);
 
     } catch (e) {
@@ -13,25 +12,25 @@ const createUser = async (username, password) => {
     }
 }
 
-module.exports = {
-    createUser
+const getUserByUsername = async(username) => {
+    const sql = `SELECT * FROM users WHERE username='${username}'`
+    const [rows, fields] = await db.query(sql)
+    return rows;
 }
 
-// // 유저 등록하기
-// router.post("/", async (req, res, next) => {
-//   try {
-//     if (!req.body.username || !req.body.password) {
-//         throw {status:400, message:"KEY_ERROR"}
-//     }
-//     const sql = `
-//         insert into users (username, password) values ('${req.body.username}', '${req.body.password}');
-//         `;
-//     await db.query(sql);
-//     return res.status(200).json({ message: "success" });
-//   } catch (e) {
-//     return res.status(e.status || 500).json({message: e.message||"SERVER_ERROR"})
-// }
-// });
+
+const signInUser = async(username) => {
+    const sql = `SELECT password FROM users WHERE username=${username}`
+    return db.query(sql)
+}
+
+
+module.exports = {
+    createUser,
+    getUserByUsername,
+    signInUser
+}
+
 
 // // 전제 유저 조회
 // router.get("/", async (req, res, next) => {
