@@ -1,11 +1,12 @@
 const router = require("express").Router();
 const db = require("../config/mysql");
+const userController = require("../controllers/userController");
 
 // 유저 등록하기
 router.post("/", async (req, res, next) => {
   try {
     const sql = `
-        insert into users (user_id, name, age) values (${req.body.user_id}, '${req.body.name}', ${req.body.age});
+        insert into users (username, password) values ('${req.body.username}', '${req.body.password}');
         `;
     await db.query(sql);
     return res.status(200).json({ message: "success" });
@@ -49,16 +50,14 @@ router.get("/", async (req, res, next) => {
 // 특정 유저 정보 가져오기
 router.get("/:userId", async (req, res, next) => {
   try {
-    const userId         = req.params.userId;        
-    const sql            = `select * from users where user_id=${userId}`;
+    const userId = req.params.userId;
+    const sql = `select * from users where id=${userId}`;
     const [rows, fields] = await db.query(sql);
     // console.log(rows)
     if (rows.length) {
-        // console.log('데이터있음')
-        return res.status(200).json({ message: "success", result: rows });
+      return res.status(200).json({ message: "success", result: rows });
     } else {
-        // console.log('데이터없음')
-        return res.status(404).json({message:"USER_NOT_FOUND"})
+      return res.status(404).json({ message: "USER_NOT_FOUND" });
     }
   } catch (e) {
     console.log(e.message);
@@ -66,37 +65,32 @@ router.get("/:userId", async (req, res, next) => {
 });
 
 // 특정 유저 정보 수정하기
-router.post("/:userId", async(req, res, next) => {
-    try {
-        const sql = `UPDATE users SET name = '${req.body.name}', age='${req.body.age}' WHERE user_id = '${req.params.userId}'`
-        const rows = await db.query(sql)
-        console.log(rows[0])
-        return res.status(200).json({ message: "updated"});
-
-    } catch(e) {
-        console.log(e.message);
-    }
-})
+router.post("/:userId", async (req, res, next) => {
+  try {
+    const sql = `UPDATE users SET username = '${req.body.username}', password='${req.body.password}' WHERE id = '${req.params.userId}'`;
+    const rows = await db.query(sql);
+    console.log(rows[0]);
+    return res.status(200).json({ message: "updated" });
+  } catch (e) {
+    console.log(e.message);
+  }
+});
 
 // 특정 유저 삭제하기
-router.delete("/:userId", async(req, res, next) => {
-    try {
-        const sql = `select * from users where user_id = ${req.params.userId};`
-        const [rows, fields] = await db.query(sql)
-        // console.log('rows', rows)
-        if (rows.length) {
-            const sql2 = `delete FROM users where user_id=${req.params.userId};`
-            const rows = await db.query(sql2)
-            // console.log('삭제중 rows', rows[0])
-            return res.status(200).json({mesaage:"deleted"})
-        } else {
-            return res.status(404).json({message:"USER_NOT_FOUND"})
-        }        
-    } catch(e) {
-        console.log(e.message);
+router.delete("/:userId", async (req, res, next) => {
+  try {
+    const sql = `select * from users where id = ${req.params.userId};`;
+    const [rows, fields] = await db.query(sql);
+    if (rows.length) {
+      const sql2 = `delete FROM users where id=${req.params.userId};`;
+      const rows = await db.query(sql2);
+      return res.status(200).json({ mesaage: "deleted" });
+    } else {
+      return res.status(404).json({ message: "USER_NOT_FOUND" });
     }
-})
-
-
+  } catch (e) {
+    console.log(e.message);
+  }
+});
 
 module.exports = router;
