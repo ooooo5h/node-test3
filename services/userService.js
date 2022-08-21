@@ -1,4 +1,5 @@
 const userDao = require("../models/userDao");
+const bcrypt = require("bcrypt");
 
 const signUp = async (username, password) => {
     const pwValidation = new RegExp(
@@ -11,17 +12,11 @@ const signUp = async (username, password) => {
         throw err;
     }
 
-    // const createUser = await userDao.createUser(
-    //     username,
-    //     password
-    // );
-
-    // console.log('createUSER는 모야', createUser)   // undefined가 찍힘. 왜 찍힐까? 내 생각에는 userDao.createUser가 아무것도 반환하고있지않음.
-    // return createUser;  //딱히 필요가 없는 것 같음? 함순데 return값이 없어도 되나? 실행은 되네?? 
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     await userDao.createUser(
         username,
-        password
+        hashedPassword
     );
 }
 
