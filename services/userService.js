@@ -29,8 +29,10 @@ const signIn = async (username, password) => {
         throw err;
     }
     
-    if (password !== userInfo.password) {
-        throw {status : 400, message : "PASSWORD_DOES_NOT_MATCH"}
+    const checkedPassword = await bcrypt.compare(password, userInfo.password);
+
+    if (!checkedPassword) {
+        throw { status : 404, message : "PASSWORD_DOES_NOT_MATCH" }
     }
 
     // 로그인에 성공했다면? 토큰 보내줘야함
